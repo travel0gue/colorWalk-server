@@ -13,7 +13,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Color Walk API")
-                        .description("색깔 산책 애플리케이션 API")
+                        .description("컬러 워킹 API")
                         .version("v1.0.0"));
     }
 }
