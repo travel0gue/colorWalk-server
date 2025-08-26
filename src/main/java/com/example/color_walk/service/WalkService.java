@@ -113,6 +113,9 @@ public class WalkService {
      */
     @Transactional(readOnly = true)
     public List<WalkResponse> getMemberWalks(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
         List<Walk> walks = walkRepository.findByMemberIdOrderByStartTimeDesc(memberId);
 
         return walks.stream()
