@@ -3,6 +3,7 @@ package com.example.color_walk.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,17 @@ public class Walk extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private Double totalDistance;
+
+    private String colorTheme;
+
+    @OneToMany(mappedBy = "walk", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WalkingPoint> walkingPoints = new ArrayList<>();
 
     @OneToMany(mappedBy = "walk", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new ArrayList<>();
