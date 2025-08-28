@@ -45,7 +45,7 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        key: ${{ secrets.EC2_PEM_KEY }}
         port: 22
         script: |
           # 기존 애플리케이션 종료
@@ -64,7 +64,7 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        key: ${{ secrets.EC2_PEM_KEY }}
         port: 22
         source: "build/libs/*.jar"
         target: "~/app/"
@@ -75,7 +75,7 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        key: ${{ secrets.EC2_PEM_KEY }}
         port: 22
         script: |
           cd ~/app
