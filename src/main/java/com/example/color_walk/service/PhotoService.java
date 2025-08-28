@@ -50,7 +50,6 @@ public class PhotoService {
                         .latitude(locationInfo.getLatitude())
                         .longitude(locationInfo.getLongitude())
                         .description(description)
-                        .displayOrder(i + 1)
                         .build();
 
                 Photo savedPhoto = photoRepository.save(photo);
@@ -76,7 +75,7 @@ public class PhotoService {
         Walk walk = walkRepository.findById(walkId)
                 .orElseThrow(() -> new RuntimeException("Walk not found with id: " + walkId));
 
-        List<Photo> photos = photoRepository.findByWalkOrderByDisplayOrderAsc(walk);
+        List<Photo> photos = photoRepository.findByWalkOrderByIdAsc(walk);
 
         // Entity -> DTO 변환
         return photos.stream()

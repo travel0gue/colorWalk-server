@@ -21,7 +21,6 @@ public class PhotoResponse {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String description;
-    private Integer displayOrder;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -33,7 +32,6 @@ public class PhotoResponse {
                 .latitude(photo.getLatitude())
                 .longitude(photo.getLongitude())
                 .description(photo.getDescription())
-                .displayOrder(photo.getDisplayOrder())
                 .createdAt(photo.getCreatedAt())
                 .updatedAt(photo.getUpdatedAt())
                 .build();
