@@ -1,11 +1,19 @@
 package com.example.color_walk.common.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@OpenAPIDefinition(
+        servers = {
+                @Server(url = "http://localhost:8080", description = "local 서버"),
+                @Server(url = "https://sinmungo.shop", description = "배포 서버")
+        }
+)
 public class SwaggerConfig {
 
     @Bean
