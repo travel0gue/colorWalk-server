@@ -24,7 +24,7 @@ public class PhotoController {
             @PathVariable("walkId") Long walkId,
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam(value = "descriptions", required = false) List<String> descriptions) {
-        log.info("사진 업로드 요청 - Walk ID: {}, 파일 개수: {}", walkId, files.size());
+        log.info("사진 업로드 요청 - Walk ID: {}, 파일 개수: {}", walkId, files != null ? files.size() : 0);
 
         List<PhotoResponse> response = photoService.uploadPhotos(walkId, files, descriptions);
 
