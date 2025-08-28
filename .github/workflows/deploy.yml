@@ -37,25 +37,6 @@ jobs:
      
    - name: Build with Gradle
      run: ./gradlew build
-
-   - name: Debug - List JAR files  # 추가
-     run: |
-       echo "=== 빌드된 JAR 파일들 ==="
-       ls -la build/libs/
-       echo "=========================="
-     
-   - name: Stop existing application
-     uses: appleboy/ssh-action@v0.1.7
-     with:
-       host: ${{ secrets.EC2_HOST }}
-       username: ${{ secrets.EC2_USER }}
-       key: ${{ secrets.EC2_PEM_KEY }}
-       port: 22
-       script: |
-         # 기존 애플리케이션 종료 (정확한 파일명으로)
-         sudo pkill -f "color_walk-0.0.1-SNAPSHOT.jar" || true
-         echo "Stop process completed"
-         exit 0  # 명시적으로 성공 종료
          
    - name: Copy JAR to EC2
      uses: appleboy/scp-action@v0.1.4
@@ -76,6 +57,8 @@ jobs:
        key: ${{ secrets.EC2_PEM_KEY }}
        port: 22
        script: |
+         sudo pkill -f "color_walk-0.0.1-SNAPSHOT.jar" || true
+         echo "Stop process completed"
          cd ~/app
          
          # 애플리케이션 시작 (정확한 파일명으로)
