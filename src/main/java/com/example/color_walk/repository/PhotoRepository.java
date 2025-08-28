@@ -18,4 +18,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     
     @Query("SELECT p FROM Photo p WHERE p.walk.id = :walkId ORDER BY p.displayOrder ASC")
     List<Photo> findPhotosByWalkId(@Param("walkId") Long walkId);
+
+    List<Photo> findByWalkOrderByIdAsc(Walk walk);
 }
