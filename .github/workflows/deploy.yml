@@ -49,14 +49,6 @@ jobs:
          # 기존 애플리케이션 종료 (정확한 파일명으로)
          sudo pkill -f "color_walk-0.0.1-SNAPSHOT.jar" || true
          
-         # 백업 디렉토리 생성
-         mkdir -p ~/app/backup
-         
-         # 기존 JAR 파일 백업 (정확한 파일명으로)
-         if [ -f ~/app/color_walk-0.0.1-SNAPSHOT.jar ]; then
-           mv ~/app/color_walk-0.0.1-SNAPSHOT.jar ~/app/backup/color_walk-$(date +%Y%m%d-%H%M%S).jar
-         fi
-         
    - name: Copy JAR to EC2
      uses: appleboy/scp-action@v0.1.4
      with:
