@@ -36,6 +36,8 @@ dependencies {
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'org.springframework.cloud:spring-cloud-aws-autoconfigure:2.2.6.RELEASE'
+    //이미지 메타데이터 추출
+    implementation 'com.drewnoakes:metadata-extractor:2.18.0'
 }
 
 tasks.named('test') {

@@ -35,8 +35,7 @@ public class S3Service {
         objMeta.setContentType(file.getContentType());
 
         try (InputStream inputStream = file.getInputStream()) {
-            amazonS3.putObject(new PutObjectRequest(bucketName, s3Key, inputStream, objMeta)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            amazonS3.putObject(new PutObjectRequest(bucketName, s3Key, inputStream, objMeta));
         }
 
         return amazonS3.getUrl(bucketName, s3Key).toString();
