@@ -4,38 +4,25 @@ import com.example.color_walk.dto.request.GeminiRequest;
 import com.example.color_walk.dto.response.ColorAnalysisResponse;
 import com.example.color_walk.dto.response.GeminiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ColorAnalysisService {
 
-    private final RestTemplate restTemplate;
-
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
-
-    @Value("${gemini.api.url}")
-    private String geminiApiUrl;
+    private final GeminiService geminiService;
 
     public ColorAnalysisResponse analyzeImageColors(MultipartFile imageFile) {
         try {
             String base64Image = encodeImageToBase64(imageFile);
             String prompt = createColorAnalysisPrompt();
             
-            GeminiRequest request = buildGeminiRequest(prompt, base64Image, imageFile.getContentType());
-            GeminiResponse response = callGeminiApi(request);
+            GeminiRequest request = geminiService.buildGeminiRequestWithImage(prompt, base64Image, imageFile.getContentType());
+            GeminiResponse response = geminiService.callGeminiApi(request);
             
             return parseColorAnalysisResponse(response);
         } catch (IOException e) {
@@ -65,35 +52,6 @@ public class ColorAnalysisService {
                "  \"recommendedTheme\": \"자연\",\n" +
                "  \"description\": \"이미지 설명\"\n" +
                "}";
-    }
-
-    private GeminiRequest buildGeminiRequest(String prompt, String base64Image, String mimeType) {
-        GeminiRequest.InlineData inlineData = new GeminiRequest.InlineData(mimeType, base64Image);
-        
-        GeminiRequest.Part textPart = new GeminiRequest.Part(prompt);
-        GeminiRequest.Part imagePart = new GeminiRequest.Part(inlineData);
-        
-        GeminiRequest.Content content = new GeminiRequest.Content(List.of(textPart, imagePart));
-        
-        return new GeminiRequest(List.of(content));
-    }
-
-    private GeminiResponse callGeminiApi(GeminiRequest request) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        
-        HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers);
-        String url = geminiApiUrl + "?key=" + geminiApiKey;
-        
-        ResponseEntity<GeminiResponse> response = restTemplate.exchange(
-            url, HttpMethod.POST, entity, GeminiResponse.class
-        );
-        
-        if (response.getBody() == null || response.getBody().getCandidates().isEmpty()) {
-            throw new RuntimeException("Gemini API 응답이 비어있습니다.");
-        }
-        
-        return response.getBody();
     }
 
     private ColorAnalysisResponse parseColorAnalysisResponse(GeminiResponse response) {
