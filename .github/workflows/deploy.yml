@@ -37,6 +37,12 @@ jobs:
      
    - name: Build with Gradle
      run: ./gradlew build
+
+   - name: Debug - List JAR files  # 추가
+     run: |
+       echo "=== 빌드된 JAR 파일들 ==="
+       ls -la build/libs/
+       echo "=========================="
      
    - name: Stop existing application
      uses: appleboy/ssh-action@v0.1.7
