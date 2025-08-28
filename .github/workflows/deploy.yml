@@ -54,6 +54,8 @@ jobs:
        script: |
          # 기존 애플리케이션 종료 (정확한 파일명으로)
          sudo pkill -f "color_walk-0.0.1-SNAPSHOT.jar" || true
+         echo "Stop process completed"
+         exit 0  # 명시적으로 성공 종료
          
    - name: Copy JAR to EC2
      uses: appleboy/scp-action@v0.1.4
