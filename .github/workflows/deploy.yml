@@ -71,8 +71,15 @@ jobs:
          else
            echo "Port 8080 is free"
          fi
+
+         sleep 10
          
          cd ~/app
+         # 애플리케이션 시작 전 포트 재확인
+         if sudo lsof -i:8080 > /dev/null 2>&1; then
+           echo "Port 8080 is still occupied, deployment failed"
+           exit 1
+         fi
          
          # 애플리케이션 시작 (정확한 파일명으로)
          nohup java -jar color_walk-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
