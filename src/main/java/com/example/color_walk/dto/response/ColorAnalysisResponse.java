@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,6 +29,9 @@ public class ColorAnalysisResponse {
     
     private String description;
     
+    @JsonProperty("individualImages")
+    private List<IndividualImageAnalysis> individualImages = new ArrayList<>();
+    
     private boolean success = true;
     private String errorMessage;
 
@@ -39,6 +43,21 @@ public class ColorAnalysisResponse {
         private String name;
         private String hex;
         private Double percentage;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IndividualImageAnalysis {
+        @JsonProperty("imageIndex")
+        private Integer imageIndex;
+        
+        @JsonProperty("imageName")
+        private String imageName;
+        
+        @JsonProperty("dominantColors")
+        private List<DominantColor> dominantColors;
     }
 
     public static ColorAnalysisResponse fromJsonString(String jsonString) {

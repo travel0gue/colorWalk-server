@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,6 +33,32 @@ public class GeminiService {
 
         GeminiRequest.Content content = new GeminiRequest.Content(List.of(textPart, imagePart));
 
+        return new GeminiRequest(List.of(content));
+    }
+
+    public GeminiRequest buildGeminiRequestWithTextOnly(String prompt) {
+        GeminiRequest.Part textPart = new GeminiRequest.Part(prompt);
+        GeminiRequest.Content content = new GeminiRequest.Content(List.of(textPart));
+        
+        return new GeminiRequest(List.of(content));
+    }
+
+    public GeminiRequest buildGeminiRequestWithMultipleImages(String prompt, List<String> base64Images, List<String> mimeTypes) {
+        List<GeminiRequest.Part> parts = new ArrayList<>();
+        
+        // 텍스트 프롬프트를 첫 번째 part로 추가
+        parts.add(new GeminiRequest.Part(prompt));
+        
+        // 각 이미지를 별도의 part로 추가
+        for (int i = 0; i < base64Images.size(); i++) {
+            String base64Image = base64Images.get(i);
+            String mimeType = i < mimeTypes.size() ? mimeTypes.get(i) : "image/jpeg";
+            
+            GeminiRequest.InlineData inlineData = new GeminiRequest.InlineData(mimeType, base64Image);
+            parts.add(new GeminiRequest.Part(inlineData));
+        }
+        
+        GeminiRequest.Content content = new GeminiRequest.Content(parts);
         return new GeminiRequest(List.of(content));
     }
 
