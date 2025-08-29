@@ -55,7 +55,15 @@ public class WalkService {
 
         Walk savedWalk = walkRepository.save(walk);
 
-        return convertToWalkResponse(savedWalk);
+        return WalkResponse.builder()
+                .walkId(savedWalk.getId())
+                .memberId(savedWalk.getMember().getId())
+                .title(savedWalk.getTitle())
+                .content(savedWalk.getContent())
+                .startTime(savedWalk.getStartTime())
+                .colorTheme(savedWalk.getColorTheme())
+                .totalDistance(savedWalk.getTotalDistance())
+                .build();
     }
 
     /**
