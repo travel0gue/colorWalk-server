@@ -1,12 +1,15 @@
 package com.example.color_walk.service;
 
 import com.example.color_walk.domain.Member;
+import com.example.color_walk.domain.Photo;
 import com.example.color_walk.domain.Places;
 import com.example.color_walk.domain.Walk;
 import com.example.color_walk.domain.WalkingPoint;
 import com.example.color_walk.dto.request.PlaceRecommendationRequest;
 import com.example.color_walk.dto.request.StartWalkRequest;
 import com.example.color_walk.dto.request.WalkingPointRequest;
+import com.example.color_walk.dto.response.ColorAnalysisResponse;
+import com.example.color_walk.dto.response.ColorMatchingResult;
 import com.example.color_walk.dto.response.PlaceRecommendationResponse;
 import com.example.color_walk.dto.response.WalkResponse;
 import com.example.color_walk.repository.MemberRepository;
@@ -36,6 +39,7 @@ public class WalkService {
     private final MemberRepository memberRepository;
     private final PlacesRepository placesRepository;
     private final GeminiService geminiService;
+    private final ColorAnalysisService colorAnalysisService;
 
     /**
      * 산책 시작
@@ -514,5 +518,55 @@ public class WalkService {
         reason.append("를 고려하여 AI가 선정한 맞춤형 산책로 추천입니다.");
         
         return reason.toString();
+    }
+    
+    private ColorMatchingResult calculateColorThemeMatching(String selectedColorTheme, ColorAnalysisResponse analysisResponse, int totalPhotos) {
+        // 간단한 색상 테마 매칭 로직
+        double matchingScore = calculateThemeMatchingScore(selectedColorTheme, analysisResponse);
+        String recommendation = generateMatchingRecommendation(matchingScore, selectedColorTheme);
+        
+        return ColorMatchingResult.createSuccessResult(
+                selectedColorTheme, 
+                analysisResponse, 
+                matchingScore, 
+                recommendation, 
+                totalPhotos
+        );
+    }
+    
+    private double calculateThemeMatchingScore(String selectedColorTheme, ColorAnalysisResponse analysisResponse) {
+        // 색상 테마와 분석된 색상의 매칭도를 계산하는 로직
+        if (analysisResponse.getDominantColors() == null || analysisResponse.getDominantColors().isEmpty()) {
+            return 0.0;
+        }
+        
+        // 기본 매칭 점수 계산 (실제로는 더 정교한 로직 필요)
+        double baseScore = 70.0; // 기본점수
+        
+        // 분위기 매칭 점수 추가
+        if ("자연".equalsIgnoreCase(selectedColorTheme) && "cool".equals(analysisResponse.getMood())) {
+            baseScore += 15.0;
+        } else if ("따뜻함".equalsIgnoreCase(selectedColorTheme) && "warm".equals(analysisResponse.getMood())) {
+            baseScore += 15.0;
+        }
+        
+        // 조화도 점수 반영
+        if (analysisResponse.getHarmonyScore() != null) {
+            baseScore += (analysisResponse.getHarmonyScore() - 5) * 3; // 5점 기준으로 가감점
+        }
+        
+        return Math.min(100.0, Math.max(0.0, baseScore));
+    }
+    
+    private String generateMatchingRecommendation(double matchingScore, String selectedColorTheme) {
+        if (matchingScore >= 85) {
+            return "훌륭해요! 선택하신 '" + selectedColorTheme + "' 테마와 완벽하게 어울리는 사진들입니다.";
+        } else if (matchingScore >= 70) {
+            return "좋아요! 선택하신 '" + selectedColorTheme + "' 테마와 잘 어울리는 사진들입니다.";
+        } else if (matchingScore >= 50) {
+            return "나쁘지 않아요! 선택하신 '" + selectedColorTheme + "' 테마와 어느정도 어울립니다.";
+        } else {
+            return "아쉬워요. 다음에는 '" + selectedColorTheme + "' 테마에 더 어울리는 색감의 사진을 찾아보세요.";
+        }
     }
 }

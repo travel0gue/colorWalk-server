@@ -26,6 +26,9 @@ public interface WalkRepository extends JpaRepository<Walk, Long> {
     @Query("SELECT w FROM Walk w LEFT JOIN FETCH w.walkingPoints WHERE w.id = :walkId")
     Optional<Walk> findByIdWithPoints(@Param("walkId") Long walkId);
 
+    @Query("SELECT w FROM Walk w LEFT JOIN FETCH w.photos WHERE w.id = :walkId")
+    Optional<Walk> findByIdWithPhotos(@Param("walkId") Long walkId);
+
     List<Walk> findByMemberIdOrderByStartTimeDesc(Long memberId);
 
     @Modifying

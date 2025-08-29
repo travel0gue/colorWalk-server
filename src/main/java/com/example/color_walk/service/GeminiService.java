@@ -35,6 +35,13 @@ public class GeminiService {
         return new GeminiRequest(List.of(content));
     }
 
+    public GeminiRequest buildGeminiRequestWithTextOnly(String prompt) {
+        GeminiRequest.Part textPart = new GeminiRequest.Part(prompt);
+        GeminiRequest.Content content = new GeminiRequest.Content(List.of(textPart));
+        
+        return new GeminiRequest(List.of(content));
+    }
+
     public GeminiResponse callGeminiApi(GeminiRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
