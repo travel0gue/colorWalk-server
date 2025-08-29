@@ -94,7 +94,7 @@ public class WalkService {
      */
     @Transactional(readOnly = true)
     public WalkResponse getWalkDetail(Long walkId) {
-        Walk walk = walkRepository.findByIdWithPoints(walkId)
+        Walk walk = walkRepository.findById(walkId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 산책입니다."));
 
         return convertToWalkResponse(walk);
@@ -110,6 +110,18 @@ public class WalkService {
 
         List<Walk> walks = walkRepository.findByMemberIdOrderByStartTimeDesc(memberId);
 
+        return walks.stream()
+                .map(WalkResponse::convertToWalkResponse)
+                .toList();
+    }
+
+    /**
+     * 모든 산책 목록 조회 (최신 업데이트 순)
+     */
+    @Transactional(readOnly = true)
+    public List<WalkResponse> getAllWalks() {
+        List<Walk> walks = walkRepository.findAllByOrderByUpdatedAtDesc();
+        
         return walks.stream()
                 .map(WalkResponse::convertToWalkResponse)
                 .toList();

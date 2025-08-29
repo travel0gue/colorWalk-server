@@ -23,12 +23,11 @@ public interface WalkRepository extends JpaRepository<Walk, Long> {
     
     List<Walk> findByTitleContainingIgnoreCase(String title);
 
-    @Query("SELECT w FROM Walk w LEFT JOIN FETCH w.walkingPoints WHERE w.id = :walkId")
-    Optional<Walk> findByIdWithPoints(@Param("walkId") Long walkId);
-
     List<Walk> findByMemberIdOrderByStartTimeDesc(Long memberId);
 
     @Modifying
     @Query("UPDATE Walk w SET w.totalDistance = :totalDistance WHERE w.id = :walkId")
     void updateTotalDistance(@Param("walkId") Long walkId, @Param("totalDistance") Double totalDistance);
+
+    List<Walk> findAllByOrderByUpdatedAtDesc();
 }
