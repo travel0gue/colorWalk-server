@@ -62,6 +62,16 @@ public class WalkController {
     }
 
     /**
+     * 모든 산책 목록 조회
+     */
+    @GetMapping("/all")
+    @Operation(summary = "모든 산책 목록 조회", description = "모든 산책을 최신 업데이트 순으로 조회")
+    public ResponseEntity<List<WalkResponse>> getAllWalks() {
+        List<WalkResponse> responses = walkService.getAllWalks();
+        return ResponseEntity.ok(responses);
+    }
+
+    /**
      * 회원의 산책 목록 조회
      */
     @GetMapping("/members/{memberId}")

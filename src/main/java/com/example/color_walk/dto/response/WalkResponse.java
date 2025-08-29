@@ -19,20 +19,27 @@ public class WalkResponse {
     private Double totalDistance;
     private String colorTheme;
     private List<WalkingPointResponse> walkingPoints;
+    private List<PhotoResponse> photos;
 
     /**
      * Walk 엔티티를 WalkResponse로 변환
      */
     public static WalkResponse convertToWalkResponse(Walk walk) {
-        List<WalkingPointResponse> walkingPointResponses = walk.getWalkingPoints().stream()
-                .map(point -> WalkingPointResponse.builder()
-                        .pointId(point.getId())
-                        .latitude(point.getLatitude())
-                        .longitude(point.getLongitude())
-                        .timestamp(point.getTimestamp())
-                        .sequence(point.getSequence())
-                        .build())
-                .toList();
+        List<WalkingPointResponse> walkingPointResponses = walk.getWalkingPoints() != null ? 
+                walk.getWalkingPoints().stream()
+                        .map(point -> WalkingPointResponse.builder()
+                                .pointId(point.getId())
+                                .latitude(point.getLatitude())
+                                .longitude(point.getLongitude())
+                                .timestamp(point.getTimestamp())
+                                .sequence(point.getSequence())
+                                .build())
+                        .toList() : List.of();
+
+        List<PhotoResponse> photoResponses = walk.getPhotos() != null ?
+                walk.getPhotos().stream()
+                        .map(PhotoResponse::from)
+                        .toList() : List.of();
 
         return WalkResponse.builder()
                 .walkId(walk.getId())
@@ -44,6 +51,7 @@ public class WalkResponse {
                 .totalDistance(walk.getTotalDistance())
                 .colorTheme(walk.getColorTheme())
                 .walkingPoints(walkingPointResponses)
+                .photos(photoResponses)
                 .build();
     }
 }
