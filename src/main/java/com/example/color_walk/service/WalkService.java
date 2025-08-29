@@ -152,7 +152,7 @@ public class WalkService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Walk를 찾을 수 없습니다: " + walkId));
 
         // 2. 매칭의 기준이 될 색상 테마를 가져옵니다.
-        String colorTheme = walk.getColorTheme();
+        String colorTheme = walk.getColorTheme().getKoreanName();
 
         // 3. 이미지 분석 결과 리스트를 스트림으로 처리합니다.
         long matchingColorCount = individualImageAnalyses.stream()
