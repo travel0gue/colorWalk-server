@@ -1,5 +1,6 @@
 package com.example.color_walk.dto.request;
 
+import com.example.color_walk.domain.Color;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class StartWalkRequest {
     private String title;
 
     private String content;
-    private String colorTheme;
+    private Color colorTheme;
 }

@@ -49,7 +49,7 @@ public class WalkResponse {
                 .startTime(walk.getStartTime())
                 .endTime(walk.getEndTime())
                 .totalDistance(walk.getTotalDistance())
-                .colorTheme(walk.getColorTheme())
+                .colorTheme(walk.getColorTheme().getKoreanName())
                 .walkingPoints(walkingPointResponses)
                 .photos(photoResponses)
                 .build();

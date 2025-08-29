@@ -84,6 +84,11 @@ public class WalkService {
         walk.setEndTime(LocalDateTime.now());
         updateTotalDistance(walkId); // 최종 거리 계산
 
+        // 산책한 색상을 멤버에게 획득
+        Member member = walk.getMember();
+        member.acquireColor(walk.getColorTheme());
+        memberRepository.save(member);
+
         Walk updatedWalk = walkRepository.save(walk);
 
         return convertToWalkResponse(updatedWalk);
