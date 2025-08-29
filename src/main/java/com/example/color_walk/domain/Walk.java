@@ -32,7 +32,9 @@ public class Walk extends BaseEntity {
 
     private Double totalDistance;
 
-    private String colorTheme;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "color_theme")
+    private Color colorTheme;
 
     @OneToMany(mappedBy = "walk", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WalkingPoint> walkingPoints = new ArrayList<>();

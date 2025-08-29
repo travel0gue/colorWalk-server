@@ -66,7 +66,7 @@ public class WalkService {
                 .title(savedWalk.getTitle())
                 .content(savedWalk.getContent())
                 .startTime(savedWalk.getStartTime())
-                .colorTheme(savedWalk.getColorTheme())
+                .colorTheme(savedWalk.getColorTheme().getKoreanName())
                 .totalDistance(savedWalk.getTotalDistance())
                 .build();
     }
@@ -107,6 +107,11 @@ public class WalkService {
         walk.setEndTime(LocalDateTime.now());
         updateTotalDistance(walkId); // 최종 거리 계산
 
+        // 산책한 색상을 멤버에게 획득
+        Member member = walk.getMember();
+        member.acquireColor(walk.getColorTheme());
+        memberRepository.save(member);
+
         Walk updatedWalk = walkRepository.save(walk);
 
         return convertToWalkResponse(updatedWalk);
@@ -117,7 +122,7 @@ public class WalkService {
      */
     @Transactional(readOnly = true)
     public WalkResponse getWalkDetail(Long walkId) {
-        Walk walk = walkRepository.findByIdWithPoints(walkId)
+        Walk walk = walkRepository.findById(walkId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 산책입니다."));
 
         return convertToWalkResponse(walk);
@@ -161,6 +166,17 @@ public class WalkService {
 
         // 4. (일치하는 색상 개수 * 10점)을 계산하여 최종 포인트를 반환합니다.
         return (int) (matchingColorCount * 10);
+    }
+     /**
+     * 모든 산책 목록 조회 (최신 업데이트 순)
+     */
+    @Transactional(readOnly = true)
+    public List<WalkResponse> getAllWalks() {
+        List<Walk> walks = walkRepository.findAllByOrderByUpdatedAtDesc();
+        
+        return walks.stream()
+                .map(WalkResponse::convertToWalkResponse)
+                .toList();
     }
 
     /**
