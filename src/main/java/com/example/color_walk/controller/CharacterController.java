@@ -97,4 +97,13 @@ public class CharacterController {
         }
     }
 
+    /**
+     * 포인트 조회
+     */
+    @GetMapping("/point/{memberId}")
+    public ResponseEntity<Long> getMemberPoint(@PathVariable("memberId") Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        return ResponseEntity.ok(member.getPoint());
+    }
 }

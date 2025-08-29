@@ -51,26 +51,7 @@ public class ColorAnalysisController {
                     array = @ArraySchema(schema = @Schema(type = "string", format = "binary"))
             )
             @RequestParam("images") List<MultipartFile> imageFiles) {
-        
-        if (imageFiles == null || imageFiles.toArray().length == 0) {
-            ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("최소 1개 이상의 이미지 파일이 필요합니다.");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        
-        // 모든 파일이 이미지 파일인지 검증
-        for (MultipartFile file : imageFiles) {
-            if (file.isEmpty()) {
-                ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("비어있는 이미지 파일이 있습니다.");
-                return ResponseEntity.badRequest().body(errorResponse);
-            }
-            
-            if (!isImageFile(file)) {
-                ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("이미지 파일만 업로드 가능합니다: " + file.getOriginalFilename());
-                return ResponseEntity.badRequest().body(errorResponse);
-            }
-        }
-        
-        try {
+
             ColorAnalysisResponse response;
             
             if (imageFiles.toArray().length == 1) {
@@ -83,18 +64,15 @@ public class ColorAnalysisController {
 
             Integer gainedPoint;
             if (response.getIndividualImages().isEmpty()){
-                gainedPoint = -1;
+                gainedPoint = 0;
             }else {
                 gainedPoint = walkService.calculatePoints(walkId, response.getIndividualImages());
             }
             ColorAnalysisResponseWithPoint responseWithPoint = new ColorAnalysisResponseWithPoint(response, gainedPoint);
+            walkService.addPoints(gainedPoint, walkId);
             System.out.println("gainedPoint: " + gainedPoint);
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("색상 분석 중 오류가 발생했습니다!!: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(errorResponse);
-        }
     }
 
     private boolean isImageFile(MultipartFile file) {

@@ -114,4 +114,14 @@ public class CharacterService {
 
         return characterRepository.save(character);
     }
+
+    /**
+     * 포인트 조회
+     */
+
+    public Long getMemberPoint(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        return member.getPoint();
+    }
 }

@@ -167,6 +167,14 @@ public class WalkService {
         // 4. (일치하는 색상 개수 * 10점)을 계산하여 최종 포인트를 반환합니다.
         return (int) (matchingColorCount * 10);
     }
+    /**
+     * 포인트 추가
+     */
+    public void addPoints(Integer points, Long walkId) {
+        Walk walk = walkRepository.findById(walkId).orElseThrow();
+        walk.getMember().addPoints(points.longValue());
+    }
+
      /**
      * 모든 산책 목록 조회 (최신 업데이트 순)
      */
