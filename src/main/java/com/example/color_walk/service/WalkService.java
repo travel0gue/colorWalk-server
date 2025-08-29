@@ -61,7 +61,7 @@ public class WalkService {
                 .title(savedWalk.getTitle())
                 .content(savedWalk.getContent())
                 .startTime(savedWalk.getStartTime())
-                .colorTheme(savedWalk.getColorTheme())
+                .colorTheme(savedWalk.getColorTheme().getKoreanName())
                 .totalDistance(savedWalk.getTotalDistance())
                 .build();
     }
