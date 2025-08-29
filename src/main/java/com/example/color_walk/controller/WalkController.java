@@ -1,7 +1,9 @@
 package com.example.color_walk.controller;
 
+import com.example.color_walk.dto.request.PlaceRecommendationRequest;
 import com.example.color_walk.dto.request.StartWalkRequest;
 import com.example.color_walk.dto.request.WalkingPointRequest;
+import com.example.color_walk.dto.response.PlaceRecommendationResponse;
 import com.example.color_walk.dto.response.WalkResponse;
 import com.example.color_walk.service.WalkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,5 +69,14 @@ public class WalkController {
     public ResponseEntity<List<WalkResponse>> getMemberWalks(@PathVariable("memberId") Long memberId) {
         List<WalkResponse> responses = walkService.getMemberWalks(memberId);
         return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping("/recommend")
+    @Operation(summary = "AI 기반 장소 추천", 
+               description = "사용자의 취향과 선호도를 바탕으로 AI가 추천하는 산책로 장소 5곳을 제공합니다")
+    public ResponseEntity<PlaceRecommendationResponse> recommendPlaces(
+            @Valid @RequestBody PlaceRecommendationRequest request) {
+        PlaceRecommendationResponse response = walkService.recommendPlaces(request);
+        return ResponseEntity.ok(response);
     }
 }
