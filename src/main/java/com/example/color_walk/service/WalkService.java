@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.example.color_walk.dto.response.WalkResponse.convertToWalkResponse;
@@ -135,6 +136,31 @@ public class WalkService {
         return walks.stream()
                 .map(WalkResponse::convertToWalkResponse)
                 .toList();
+    }
+
+    /**
+     * 포인트 계산
+     */
+    public Integer calculatePoints(Long walkId, List<ColorAnalysisResponse.IndividualImageAnalysis> individualImageAnalyses) {
+        // 1. walkId로 Walk 엔티티를 조회합니다.
+        Walk walk = walkRepository.findById(walkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Walk를 찾을 수 없습니다: " + walkId));
+
+        // 2. 매칭의 기준이 될 색상 테마를 가져옵니다.
+        String colorTheme = walk.getColorTheme();
+
+        // 3. 이미지 분석 결과 리스트를 스트림으로 처리합니다.
+        long matchingColorCount = individualImageAnalyses.stream()
+                // 각 IndividualImageAnalysis 객체에서 dominantColors 리스트를 스트림으로 변환하여
+                // 하나의 단일 스트림(Stream<DominantColor>)으로 만듭니다.
+                .flatMap(analysis -> analysis.getDominantColors().stream())
+                // DominantColor 객체의 이름(name)이 colorTheme과 일치하는 요소만 필터링합니다.
+                .filter(dominantColor -> Objects.equals(dominantColor.getName(), colorTheme))
+                // 필터링된 요소의 총 개수를 셉니다.
+                .count();
+
+        // 4. (일치하는 색상 개수 * 10점)을 계산하여 최종 포인트를 반환합니다.
+        return (int) (matchingColorCount * 10);
     }
 
     /**

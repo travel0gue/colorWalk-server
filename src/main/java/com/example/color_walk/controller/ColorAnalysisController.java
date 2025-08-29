@@ -1,7 +1,9 @@
 package com.example.color_walk.controller;
 
 import com.example.color_walk.dto.response.ColorAnalysisResponse;
+import com.example.color_walk.dto.response.ColorAnalysisResponseWithPoint;
 import com.example.color_walk.service.ColorAnalysisService;
+import com.example.color_walk.service.WalkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -25,11 +27,12 @@ import java.util.List;
 public class ColorAnalysisController {
 
     private final ColorAnalysisService colorAnalysisService;
+    private final WalkService walkService;
 
     /**
      * 여러 이미지 종합 색상 분석
      */
-    @PostMapping(value = "/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/analyze/{walkId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "여러 이미지 종합 색상 분석", description = "업로드된 여러 이미지를 종합적으로 분석하여 전체적인 색상 테마, 분위기, 조화도 등을 반환합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "색상 분석 성공", 
@@ -40,6 +43,7 @@ public class ColorAnalysisController {
                     content = @Content(schema = @Schema(implementation = ColorAnalysisResponse.class)))
     })
     public ResponseEntity<ColorAnalysisResponse> analyzeImageColors(
+            @PathVariable("walkId") Long walkId,
             @Parameter(
                     description = "분석할 이미지 파일들 (JPG, PNG 등) - 여러 개 선택 가능",
                     required = true,
@@ -76,10 +80,19 @@ public class ColorAnalysisController {
                 // 여러 이미지인 경우 종합 분석 메소드 사용
                 response = colorAnalysisService.analyzeMultipleImageColors(imageFiles);
             }
-            
+
+            Integer gainedPoint;
+            if (response.getIndividualImages().isEmpty()){
+                gainedPoint = -1;
+            }else {
+                gainedPoint = walkService.calculatePoints(walkId, response.getIndividualImages());
+            }
+            ColorAnalysisResponseWithPoint responseWithPoint = new ColorAnalysisResponseWithPoint(response, gainedPoint);
+            System.out.println("gainedPoint: " + gainedPoint);
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("색상 분석 중 오류가 발생했습니다: " + e.getMessage());
+            ColorAnalysisResponse errorResponse = ColorAnalysisResponse.createErrorResponse("색상 분석 중 오류가 발생했습니다!!: " + e.getMessage());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
